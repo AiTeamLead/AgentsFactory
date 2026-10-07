@@ -62,9 +62,18 @@ class AgentResponse(BaseModel):
     """Agent information response."""
 
     agent_id: str
-    role: str
-    model: str
+    name: str = ""
+    version: str = "1.0.0"
+    description: str = ""
+    role: str = ""
+    model: str = ""
     status: str = "registered"
+    input_schema: dict[str, Any] = Field(default_factory=dict)
+    output_schema: dict[str, Any] = Field(default_factory=dict)
+    capabilities: list[str] = Field(default_factory=list)
+    required_tools: list[str] = Field(default_factory=list)
+    required_permissions: list[str] = Field(default_factory=list)
+    execution_mode: str = "sync"
 
 
 class AgentRunRequest(BaseModel):

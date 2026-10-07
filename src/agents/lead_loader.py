@@ -17,7 +17,8 @@ DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.a
 import sqlite3
 
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
+    path = os.environ.get("LEAD_LOADER_DB_PATH", DB_PATH)
+    conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -189,7 +190,26 @@ def load_leads_to_notion(leads: list[dict], batch_size: int = 50) -> dict:
     return {"status": "skipped", "message": "Loading to Notion via separate script"}
 
 
+
+def run_lead_loader(download: bool = True, dry_run: bool = False) -> dict:
+    """API entry point for the lead loader agent."""
+    if dry_run:
+        return {
+            "status": "success", 
+            "message": "Dry run successful. No leads downloaded or modified.",
+            "dry_run": True
+        }
+        
+    leads = []
+    if download:
+        leads = download_csv()
+        
+    stats = load_leads_to_db(leads)
+        
+    return stats
+
 if __name__ == "__main__":
+
     import argparse
     parser = argparse.ArgumentParser(description="Lead Loader")
     parser.add_argument("--download", action="store_true", help="Download CSV and load to DB")

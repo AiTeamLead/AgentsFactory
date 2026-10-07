@@ -126,7 +126,7 @@ if [ ! -f "agentsfactory_metrics.db" ]; then
     python3 -c "
 import sqlite3
 conn = sqlite3.connect('agentsfactory_metrics.db')
-conn.execute('CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY AUTOINCREMENT, company TEXT, email TEXT, phone TEXT, website TEXT, category TEXT, social_lead_score TEXT, facebook_followers INTEGER DEFAULT 0, twitter_followers INTEGER DEFAULT 0, facebook_url TEXT, twitter_url TEXT, gmb_url TEXT, keyword TEXT, created_at TEXT DEFAULT (datetime(\"now\")))')
+conn.execute('CREATE TABLE IF NOT EXISTS leads (id INTEGER PRIMARY KEY AUTOINCREMENT, keyword TEXT, company TEXT, website TEXT, phone TEXT, email TEXT, category TEXT, facebook_url TEXT, facebook_likes INTEGER DEFAULT 0, facebook_followers INTEGER DEFAULT 0, facebook_posts_30d INTEGER DEFAULT 0, facebook_last_post_days INTEGER DEFAULT 0, social_lead_score TEXT, twitter_url TEXT, twitter_id TEXT, twitter_tweets INTEGER DEFAULT 0, twitter_followers INTEGER DEFAULT 0, twitter_likes INTEGER DEFAULT 0, twitter_posts_30d INTEGER DEFAULT 0, twitter_last_post_days INTEGER DEFAULT 0, gmb_url TEXT, created_at TEXT DEFAULT (datetime(\"now\")))')
 conn.execute('CREATE TABLE IF NOT EXISTS agent_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, agent_name TEXT NOT NULL, action TEXT NOT NULL, target TEXT DEFAULT \"\", status TEXT DEFAULT \"completed\", details TEXT DEFAULT \"\", created_at TEXT DEFAULT (datetime(\"now\")))')
 conn.commit()
 conn.close()
