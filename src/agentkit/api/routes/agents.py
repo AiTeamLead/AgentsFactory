@@ -167,7 +167,7 @@ async def run_agent(agent_id: str, request: AgentRunRequest, current_user: User 
             from agentkit.models.pipeline import PipelineState
             # PipelineState expects original_input to be a string
             state = PipelineState(original_input=request.input)
-            result = await agent.execute(state, **request.context)
+            result = await agent.execute(state)
             
             return {
                 "agent_id": agent_id,
@@ -192,7 +192,7 @@ async def run_agent(agent_id: str, request: AgentRunRequest, current_user: User 
     try:
         from agentkit.models.pipeline import PipelineState
         state = PipelineState(original_input=request.input)
-        result = await agent.execute(state, **request.context)
+        result = await agent.execute(state)
 
         return {
             "agent_id": agent_id,
