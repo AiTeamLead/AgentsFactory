@@ -330,7 +330,7 @@ def render_lead_pipeline():
     else:
         # Fallback to dashboard leads table
         leads = conn.execute(
-            "SELECT * FROM leads ORDER BY score DESC, created_at DESC"
+            "SELECT * FROM leads ORDER BY created_at DESC"
         ).fetchall()
         score_counts = []
         category_counts = []
