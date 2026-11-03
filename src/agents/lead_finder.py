@@ -155,11 +155,13 @@ def ensure_tables() -> None:
     conn = get_db()
     conn.executescript(
         "CREATE TABLE IF NOT EXISTS leads ("
-        "id TEXT PRIMARY KEY, name TEXT, company TEXT, email TEXT, "
-        "phone TEXT, source TEXT DEFAULT 'inbound', stage TEXT DEFAULT 'new', "
-        "score INTEGER DEFAULT 0, notes TEXT DEFAULT '', "
-        "created_at TEXT DEFAULT (datetime('now')), "
-        "updated_at TEXT DEFAULT (datetime('now')));"
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, keyword TEXT, company TEXT, website TEXT, "
+        "phone TEXT, email TEXT, category TEXT, facebook_url TEXT, facebook_likes INTEGER DEFAULT 0, "
+        "facebook_followers INTEGER DEFAULT 0, facebook_posts_30d INTEGER DEFAULT 0, "
+        "facebook_last_post_days INTEGER DEFAULT 0, social_lead_score TEXT, twitter_url TEXT, "
+        "twitter_id TEXT, twitter_tweets INTEGER DEFAULT 0, twitter_followers INTEGER DEFAULT 0, "
+        "twitter_likes INTEGER DEFAULT 0, twitter_posts_30d INTEGER DEFAULT 0, "
+        "twitter_last_post_days INTEGER DEFAULT 0, gmb_url TEXT, created_at TEXT DEFAULT (datetime('now')));"
         ""
         "CREATE TABLE IF NOT EXISTS agent_activity ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, agent_name TEXT NOT NULL, "

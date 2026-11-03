@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   # FastAPI REST API
   api:
@@ -9,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - AGENTSFACTORY_ENV=production
       - AGENTSFACTORY_LOG_LEVEL=INFO
     volumes:
@@ -21,17 +19,17 @@ services:
       timeout: 10s
       retries: 3
 
-  # Streamlit Dev Dashboard
-  dashboard:
+  # Streamlit Command Center Dashboard
+  command_center:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8501:8501"
     environment:
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - AGENTSFACTORY_ENV=production
-    command: ["streamlit", "run", "src/agentkit/observability/dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    command: ["streamlit", "run", "src/agentkit/observability/command_center.py", "--server.port=8501", "--server.address=0.0.0.0"]
     volumes:
       - ./data:/app/data
     restart: unless-stopped

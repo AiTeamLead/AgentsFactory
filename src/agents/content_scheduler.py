@@ -125,7 +125,7 @@ def generate_post(pillar: str = None, day_count: int = 1) -> str:
     return post
 
 
-def schedule_weekly_posts(posts_per_day: int = 1, days_ahead: int = 7) -> list[dict]:
+def schedule_weekly_posts(posts_per_day: int = 1, days_ahead: int = 7, dry_run: bool = False) -> list[dict]:
     """
     Schedule a full week of LinkedIn posts.
     Spreads posts across the week at optimal times.
@@ -157,10 +157,13 @@ def schedule_weekly_posts(posts_per_day: int = 1, days_ahead: int = 7) -> list[d
                 scheduled_time += timedelta(hours=1)
 
             # Schedule via Ocoya
-            result = schedule_linkedin_post(
-                post_text,
-                hours_from_now=(scheduled_time - today).total_seconds() / 3600
-            )
+            if dry_run:
+                result = {"status": "dry_run", "post": post_text, "scheduled_hours": (scheduled_time - today).total_seconds() / 3600}
+            else:
+                result = schedule_linkedin_post(
+                    post_text,
+                    hours_from_now=(scheduled_time - today).total_seconds() / 3600
+                )
 
             results.append({
                 "day": day_name,
@@ -169,7 +172,11 @@ def schedule_weekly_posts(posts_per_day: int = 1, days_ahead: int = 7) -> list[d
                 "result": result,
                 "preview": post_text[:80] + "...",
             })
-            print(f"✅ Scheduled: {day_name} - {pillar} - {scheduled_time.strftime('%H:%M IST')}")
+            # Safe print for Windows
+            try:
+                print(f"[OK] Scheduled: {day_name} - {pillar} - {scheduled_time.strftime('%H:%M IST')}")
+            except UnicodeEncodeError:
+                pass
 
     return results
 
@@ -195,7 +202,23 @@ def get_content_calendar() -> dict:
         return {"error": str(e)}
 
 
+
+def run_content_scheduler(action: str = "generate", pillar: str = None, posts_per_day: int = 1, dry_run: bool = False) -> dict:
+    """API entry point for the content scheduler agent."""
+    if action == "generate":
+        post = generate_post(pillar=pillar)
+        return {"action": "generate", "post": post}
+    elif action == "calendar":
+        cal = get_content_calendar()
+        return {"action": "calendar", "calendar": cal}
+    elif action == "schedule_week":
+        results = schedule_weekly_posts(posts_per_day=posts_per_day, dry_run=dry_run)
+        return {"action": "schedule_week", "scheduled": len(results), "posts": results, "dry_run": dry_run}
+    else:
+        return {"error": f"Unknown action: {action}"}
+
 if __name__ == "__main__":
+
     import argparse
     parser = argparse.ArgumentParser(description="Content Scheduler Agent")
     parser.add_argument("--generate", action="store_true", help="Generate a sample post")
@@ -210,7 +233,7 @@ if __name__ == "__main__":
         print(post)
     elif args.schedule_week:
         results = schedule_weekly_posts(posts_per_day=args.posts_per_day)
-        print(f"\n✅ Scheduled {len(results)} posts")
+        print(f"\n[DONE] Scheduled {len(results)} posts")
     elif args.calendar:
         cal = get_content_calendar()
         print(json.dumps(cal, indent=2))

@@ -24,6 +24,7 @@ dependencies = [
     "streamlit>=1.39.0",
     "plotly>=5.24.0",
     "pandas>=2.2.0",
+    "pyjwt>=2.15.1",
 ]
 
 [project.optional-dependencies]
@@ -48,3 +49,8 @@ addopts = "-v --tb=short"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+
+[dependency-groups]
+dev = [
+    "cryptography>=50.0.2",
+]
